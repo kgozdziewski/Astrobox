@@ -1,5 +1,6 @@
 # Astrobox
-A simple (almost trivial) Python package for Spherical Astronomy course
+
+A simple (almost trivial) Python 3.x package for Spherical Astronomy course
 
 Moduł funkcji do obliczeń w astronomii sferycznej i klasycznej, korzysta z modułu do obliczeń matematycznych numpy
   
