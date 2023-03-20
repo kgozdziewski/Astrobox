@@ -1,12 +1,14 @@
 # Astrobox
 
-A simple (almost trivial) Python 3.x package for Spherical Astronomy course
+A very simple (almost trivial) Python 3.x package for the Spherical and Classical Astronomy course. It focuses on checking trigonometric formulae developed in scalar form. Note that some functions may lack (sometimes important) details, be incomplete or oversimplified. 
 
-Moduł funkcji do obliczeń w astronomii sferycznej i klasycznej, korzysta z modułu do obliczeń matematycznych numpy
+Bardzo prosty (trywialny) pakiet Pythona 3.x dla kursu Astronomii Sferycznej i Klasycznej. Skupia się na wzorach trygonometrycznych opracowanych w postaci skalarnej. Zwróć uwagę, że niektórym funkcjom może brakować (czasem ważnych) szczegółów, mogą one być niekompletne lub nadmiernie uproszczone do poważniejszych zastosowań. 
+
+Astrobox korzysta ze standardowego modułu do obliczeń matematycznych numpy
   
     * Użycie: 
       import astrobox as asa
-      (funkcje modułu należy poprzedzić prefiksem asa)
+      (funkcje modułu należy następnie poprzedzić prefiksem asa)
   
     * Lista funkcji w module: 
       dir(asa)
