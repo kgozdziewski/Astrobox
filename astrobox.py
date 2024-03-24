@@ -120,7 +120,7 @@ def day2hr( dt ):
       12h  0m  0.00s
 
    """
-   day   = np.int( dt )
+   day   = int( dt )
    min, hour  = np.modf( (dt-day)*24 )
    return ( day, hour, min*60 );
 
@@ -179,7 +179,7 @@ def printhr( angle, name='', fsec=" %3.2f" ):
 
      przykład:
      >>> printhr( 3*np.pi/2. + 0.1 )
-     18h 22m  55.10s
+      18h 22m  55.10s
 
    """
    deg, min, sec = rad2hr( np.mod( angle, 2*np.pi ) );
@@ -373,6 +373,7 @@ def hor2eqII( phi, LST, A, h ):
      α =   5h 10m  10.00s
      >>> printdeg( δ, "δ" )
      δ =  23° 29' 60.00”
+    
 
    """
    t, delta = hor2eqI( phi, A, h )
@@ -506,7 +507,7 @@ def GMST( year, month, day, hour, minute, second ):
      przykłady:
      >>> round(GMST(2010,6,10,17,30,30),12)
      2.820194563323
-     >>> printhr(asa.GMST(2010,6,10,17,30,30))
+     >>> printhr(GMST(2010,6,10,17,30,30))
      10h 46m  20.46s
      >>> round( rad2hr(GMST(2010,6,10,17,30,30))[2], 3)
      20.459
@@ -527,9 +528,9 @@ def GST( year, month, day, hour, minute, second ):
      przykłady:
      >>> round( GST( 2019, 3, 13, 0, 0, 0 ), 12 )
      2.972951470668
-     >>> asa.printhr(asa.GST( 2019, 3, 13, 0, 0, 0 ))
-     11h 21m  21.02s      
-     >>> round( asa.rad2hr(asa.GST(2019,3,13,0,0,0))[2], 2)
+     >>> printhr(GST( 2019, 3, 13, 0, 0, 0 ))
+       11h 21m  21.02s      
+     >>> round( rad2hr(GST(2019,3,13,0,0,0))[2], 2)
      21.02
      
    """
