@@ -17,6 +17,9 @@ def intro():
       from importlib import reload
       reload(asa)
       
+    * Usunięcie opisu: dodaj komentarz do ostatniego wiersza
+      # intro(doc)  
+      
     © Krzysztof Goździewski, 2009-2023, wersja 18.04.2024
   """ 
 #----------------------------------------------------------------------------
