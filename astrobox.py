@@ -17,7 +17,7 @@ def intro():
       from importlib import reload
       reload(asa)
       
-    © Krzysztof Goździewski, 2009-2023, wersja 18.03.2023
+    © Krzysztof Goździewski, 2009-2023, wersja 18.04.2024
   """ 
 #----------------------------------------------------------------------------
 #
@@ -926,6 +926,6 @@ def precess( dt ):
    return( P )
 
 
-#print("Moduł astrobox, ©Krzysztof Goździewski, 2009-2022, ver 18.04.2023")
+#print("Moduł astrobox, ©Krzysztof Goździewski, 2009-2024, ver 18.04.2024")
 doc(intro)
 
