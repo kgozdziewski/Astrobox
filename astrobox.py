@@ -12,15 +12,17 @@ def intro():
     * Lista funkcji w module: dir(asa)
   
     * Opis funkcji "foo" z przykładem: asa.opis(asa.foo), asa.doc(asa.foo)
+    
+    * Uruchomienie wybranych funkcji: asa.test()
   
     * Uaktualnienie modułu po zmianach w powłoce Pythona:
       from importlib import reload
       reload(asa)
       
-    * Usunięcie opisu: dodaj komentarz do ostatniego wiersza
+    * Usunięcie tego opisu: dodaj komentarz do ostatniego wiersza w pliku
       # intro(doc)  
       
-    © Krzysztof Goździewski, 2009-2023, wersja 18.03.2024
+    © Krzysztof Goździewski, 2009-2023, wersja 6.04.2024
   """ 
 #----------------------------------------------------------------------------
 #
@@ -120,7 +122,7 @@ def day2hr( dt ):
       12h  0m  0.00s
 
    """
-   day   = np.int( dt )
+   day   = int( dt )
    min, hour  = np.modf( (dt-day)*24 )
    return ( day, hour, min*60 );
 
@@ -179,7 +181,7 @@ def printhr( angle, name='', fsec=" %3.2f" ):
 
      przykład:
      >>> printhr( 3*np.pi/2. + 0.1 )
-     18h 22m  55.10s
+      18h 22m  55.10s
 
    """
    deg, min, sec = rad2hr( np.mod( angle, 2*np.pi ) );
@@ -373,6 +375,7 @@ def hor2eqII( phi, LST, A, h ):
      α =   5h 10m  10.00s
      >>> printdeg( δ, "δ" )
      δ =  23° 29' 60.00”
+    
 
    """
    t, delta = hor2eqI( phi, A, h )
@@ -506,7 +509,7 @@ def GMST( year, month, day, hour, minute, second ):
      przykłady:
      >>> round(GMST(2010,6,10,17,30,30),12)
      2.820194563323
-     >>> printhr(asa.GMST(2010,6,10,17,30,30))
+     >>> printhr(GMST(2010,6,10,17,30,30))
      10h 46m  20.46s
      >>> round( rad2hr(GMST(2010,6,10,17,30,30))[2], 3)
      20.459
@@ -527,9 +530,9 @@ def GST( year, month, day, hour, minute, second ):
      przykłady:
      >>> round( GST( 2019, 3, 13, 0, 0, 0 ), 12 )
      2.972951470668
-     >>> asa.printhr(asa.GST( 2019, 3, 13, 0, 0, 0 ))
-     11h 21m  21.02s      
-     >>> round( asa.rad2hr(asa.GST(2019,3,13,0,0,0))[2], 2)
+     >>> printhr(GST( 2019, 3, 13, 0, 0, 0 ))
+       11h 21m  21.02s      
+     >>> round( rad2hr(GST(2019,3,13,0,0,0))[2], 2)
      21.02
      
    """
@@ -635,135 +638,7 @@ def doc(fun):
   
   
 
-def test():
-  """
 
-    Funkcja testowa modułu asabox
-    
-  """
-
-  print("\nLista funkcji: dir(asa) ")
-  #dir(astrobox)
-  print("\nPrzykład opisu funkcji JDN")
-  print(inspect.getdoc(JDN))
-  print("\nTest kilku funkcji modułu toolbox.py \n")
-  DEC = deg2rad( 89, 15, 40.8 )
-  printdeg( DEC, 'deklinacja Polaris' )
-  print("deklinacja Polaris, bez nazwy")
-  printdeg( DEC )
-  JD( 2020, 3, 18, 14, 10, 10 )
-  gmst = GMST( 2019, 3, 18, 14, 0, 0 )
-  printhr( gmst, 'średni czas gwiazdowy Greenwich   ')
-  gst = GST( 2019, 3, 18, 14, 0, 0 )
-  printhr( gst,  'prawdziwy czas gwiazdowy Greenwich')
-  print("\nPrzemiana ekliptyczne->równikowe II")
-  alpha,delta = ecl2eqII( 23.5*d2r, 30.0*d2r, 23.5*d2r )
-  print( "alpha = %f6.3, delta = %f6.3 " % ( alpha, delta ) )
-  print("\n")
-  
-
-if __name__ == "__main__":
-  import doctest
-  import inspect
-  print("\nTest zgodności wybranych funkcji modułu astrobox.py\n")
-  doctest.testmod(exclude_empty=True)
-  test()
-
-
-# ----------------------------------------------------------------------------
-# Notatki
-# ----------------------------------------------------------------------------
-#
-# Definicja i algorytm obliczania czasu gwiazdowego (Astronomical Almanac)
-#
-# https://aa.usno.navy.mil/faq/docs/GAST.php
-#
-# Sidereal time is a system of timekeeping based on the rotation of the Earth
-# with respect to the fixed stars in the sky.  More specifically, it is the
-# measure of the hour angle of the vernal equinox.  If the hour angle is
-# measured with respect to the true equinox, apparent sidereal time is being
-# measured.  If the hour angle is measured with respect to the mean equinox,
-# mean sidereal time is being measured.  When the measurements are made with
-# respect to the meridian at Greenwich, the times are referred to as
-# Greenwich mean sidereal time (GMST) and Greenwich apparent sidereal time
-# (GAST).
-
-# Given below is a simple algorithm for computing apparent sidereal time to
-# an accuracy of about 0.1 second, equivalent to about 1.5 arcseconds on the
-# sky.  The input time required by the algorithm is represented as a Julian
-# date (Julian dates can be used to determine Universal Time.)
-
-# Let JD be the Julian date of the time of interest.  Let JD0 be the Julian
-# date of the previous midnight (0h) UT (the value of JD0 will end in .5
-# exactly), and let H be the hours of UT elapsed since that time.  Thus we
-# have JD = JD0 + H/24.
-
-# For both of these Julian dates, compute the number of days and fraction (+
-# or -) from 2000 January 1, 12h UT, Julian date 2451545.0:
-
-# D = JD - 2451545.0
-# D0 = JD0 - 2451545.0
-
-# Then the Greenwich mean sidereal time in hours is
-
-# GMST = 6.697374558 + 0.06570982441908 D0 + 1.00273790935 H + 0.000026 T2
-
-# where T = D/36525 is the number of centuries since the year 2000; thus the
-# last term can be omitted in most applications.  It will be necessary to
-# reduce GMST to the range 0h to 24h.  Setting H = 0 in the above formula
-# yields the Greenwich mean sidereal time at 0h UT, which is tabulated in The
-# Astronomical Almanac.
-
-# The following alternative formula can be used with a loss of precision of
-# 0.1 second per century:
-
-# GMST = 18.697374558 + 24.06570982441908 D
-
-# where, as above, GMST must be reduced to the range 0h to 24h.  The
-# equations for GMST given above are adapted from those given in Appendix A
-# of USNO Circular No.  163 (1981).
-
-# The Greenwich apparent sidereal time is obtained by adding a correction to
-# the Greenwich mean sidereal time computed above.  The correction term is
-# called the nutation in right ascension or the equation of the equinoxes.
-# Thus,
-
-# GAST = GMST + eqeq.
-
-# The equation of the equinoxes is given as eqeq = Δψ cos ε where Δψ, the
-# nutation in longitude, is given in hours approximately by
-# Δψ ≈ -0.000319 sin Ω - 0.000024 sin 2L
-# with Ω, the Longitude of the ascending node of the Moon, given as
-# Ω = 125.04 - 0.052954 D,
-# and L, the Mean Longitude of the Sun, given as
-# L = 280.47 + 0.98565 D.
-# ε is the obliquity and is given as ε = 23.4393 - 0.0000004 D.
-# The above expressions for Ω, L, and ε are all expressed in degrees.
-
-# The mean or apparent sidereal time locally is found by obtaining the local
-# longitude in degrees, converting it to hours by dividing by 15, and then
-# adding it to or subtracting it from the Greenwich time depending on whether
-# the local position is east (add) or west (subtract) of Greenwich.
-
-# If you need apparent sidereal time to better than 0.1 second accuracy on a
-# regular basis, consider using the Multiyear Interactive Computer Almanac,
-# MICA.  MICA provides very accurate almanac data in tabular form for a range
-# of years.
-
-# NOTES ON ACCURACY
-
-# The maximum error resulting from the use of the above formulas for sidereal
-# time over the period 2000-2100 is 0.432 seconds; the RMS error is 0.01512
-# seconds.  To obtain sub-second accuracy in sidereal time, it is important
-# to use the form of Universal Time called UT1 as the basis for the input
-# Julian date.
-
-# The maximum value of the equation of the equinoxes is about 1.1 seconds, so
-# if an error of ~1 second is unimportant, the last series of formulas can be
-# skipped entirely.  In this case set eqeq = 0 and GAST = GMST, and use
-# either UT1 or UTC as the Universal Time basis for the input Julian date.
-#
-#
 
 # ----------------------------------------------------------------------------
 # konwersja elementów wektorowych
@@ -927,8 +802,333 @@ def precess( dt ):
    # macierz precesji ogolnej
    P      = np.dot( A3(-zA), np.dot( A2(thetaA), A3(-ksiA) ) )
    return( P )
+   
+# ----------------------------------------------------------------------------
+# Długość Słońca i Równanie Czasu
+# ----------------------------------------------------------------------------
+   
+def SunLongitude( year, month, day, hour, min, sec ):
+   """
+     długość ekliptyczna Słońca
+     dokładność 0.1'-0.7' w latach 1800:2050
+     uwzględniona precesja punktu Barana, precesja peryhelium  i aberracja
+     ruch średni w długości po uwzględnieniu precesji:
+
+     >>> (360.0)/365.242189
+     0.9856473617838273
+
+     wynik ten sam, gdy do ruchu średniego Ziemi (JPL) dodamy tempo precesji:
+     >>> 35999.37244981/36525+3.8246e-5
+     0.9856473479797399     
+     lub w wersji z wyznaczeniem tempa precesji     
+     >>> 35999.37244981/36525.0-0.32327364/36525.0
+     0.9856002512298425
+
+     poprawka aberracyjna do długości średniej Ziemi w epoce początkowej
+     >>> 100.46457166-20.5/3600.0
+     100.45887721555556
+
+   """         
+   # stałe modelu orbitalnego Słońca w/g danych JPL
+   deg2rad = np.pi/180.0
+   t0      = 2451545.0    # epoka początkowa [JD]
+   ecc     = 0.01671123   # mimośród obity Ziemi w epoce t0  
+   omega0  = 102.93768193 # długość preicentrum [deg] w epoce t0   
+   kappa   = 20.5/3600.0  # poprawka aberracyjna [deg] 
+   psi     = 3.8246e-5    # roczne tempo precesji [deg]
+                          # dw/dt precesja peryhelium [deg/dzień]
+   nomega  = 0.32327364/36525.0 
+                          # dL/dt ruch średni w długości                        
+   n       = 35999.37244981/36525.0 
+   nL      = n + psi      # ruch średni w długości z precesją [deg/dzień]                 
+   nM      = n - nomega   # ruch średni z precesją peryhelium [deg/dzień]
+                          # długość średnia epoki + popr. aberracji [deg] 
+   lambda0 = 100.46457166-kappa 
+                          # anomalia średnia w epoce t0
+   M0      = lambda0 - omega0
+   #
+   # Algorytm obliczenia długości ekliptycznej Słońca
+   #
+   # data juliańska momentu obserwacji
+   t       = JD( year, month, day, hour, min, sec )   
+   # długość średnia Ziemi w epoce z aberracją, ruch średni uwzględnia precesję
+   meanL   = np.mod( lambda0 + nL*(t-t0), 360.0 )
+   # anomalia śednia w epoce obserwacji, uwzględnia precesję peryhelium
+   M       = np.mod( M0 + nM*(t-t0), 360.0 )*deg2rad
+   # poprawka ze względu na równanie środka, wyznaczające anomalię prawdziwą
+   q       = 2.0*ecc*np.sin(M) + (5.0/4.0)*ecc*ecc*np.sin(2.0*M)
+   #
+   # dokładniejsza wersja równania środka, tutaj bez wpływu na końcowy wynik
+   #
+   #q      = (2.0*ecc-ecc**3/4.0)*np.sin(M) + \
+   #         (5.0/4.0)*ecc*ecc*np.sin(2.0*M) + \
+   #         (13.0/12.0)*ecc*ecc*ecc*np.sin(3.0*M)
+   #
+   # długość ekliptyczna Słońca w układzie równika i ekliptyki daty
+   return( np.mod( meanL + q/deg2rad +180.0, 360.0 )*deg2rad );
+
+def SunLongitudet( jd ):
+   """
+     długość ekliptyczna Słońca z argumentem Daty Juliańskiej
+     dokładność 0.1'-0.7' w latach 1800:2050
+     uwzględniona precesja punktu Barana, precesja peryhelium obity i aberracja
+     ruch średni w długości po uwzględnieniu precesji:
+
+     >>> (360.0)/365.242189
+     0.9856473617838273
+
+     wynik ten sam, gdy do ruchu średniego Ziemi (JPL) dodamy tempo precesji:
+     >>> 35999.37244981/36525+3.8246e-5
+     0.9856473479797399     
+     lub w wersji z wyznaczeniem tempa precesji     
+     >>> 35999.37244981/36525.0-0.32327364/36525.0
+     0.9856002512298425
+
+     poprawka aberracyjna do długości średniej Ziemi w epoce początkowej
+     >>> 100.46457166-20.5/3600.0
+     100.45887721555556
+
+   """         
+   # stałe modelu orbitalnego Słońca w/g danych JPL
+   deg2rad = np.pi/180.0
+   t0      = 2451545.0    # epoka początkowa [JD]
+   ecc     = 0.01671123   # mimośród obity Ziemi w epoce t0  
+   omega0  = 102.93768193 # długość preicentrum [deg] w epoce t0   
+   kappa   = 20.5/3600.0  # poprawka aberracyjna [deg] 
+   psi     = 3.8246e-5    # roczne tempo precesji [deg]
+                          # dw/dt precesja peryhelium [deg/dzień]
+   nomega  = 0.32327364/36525.0 
+                          # dL/dt ruch średni w długości                        
+   n       = 35999.37244981/36525.0 
+   nL      = n + psi      # ruch średni w długości z precesją [deg/dzień]                 
+   nM      = n - nomega   # ruch średni z precesją peryhelium [deg/dzień]
+                          # długość średnia epoki + popr. aberracji [deg] 
+   lambda0 = 100.46457166-kappa 
+                          # anomalia średnia w epoce t0
+   M0      = lambda0 - omega0
+   #
+   # Algorytm obliczenia długości ekliptycznej Słońca
+   #
+   # data juliańska momentu obserwacji
+   t       = jd
+   # długość średnia Ziemi w epoce z aberracją, ruch średni uwzględnia precesję
+   meanL   = np.mod( lambda0 + nL*(t-t0), 360.0 )
+   # anomalia śednia w epoce obserwacji, uwzględnia precesję peryhelium
+   M       = np.mod( M0 + nM*(t-t0), 360.0 )*deg2rad
+   # poprawka ze względu na równanie środka, wyznaczające anomalię prawdziwą
+   q       = 2.0*ecc*np.sin(M) + (5.0/4.0)*ecc*ecc*np.sin(2.0*M)
+   #
+   # dokładniejsza wersja równania środka, tutaj bez wpływu na końcowy wynik
+   #
+   #q      = (2.0*ecc-ecc**3/4.0)*np.sin(M) + \
+   #         (5.0/4.0)*ecc*ecc*np.sin(2.0*M) + \
+   #         (13.0/12.0)*ecc*ecc*ecc*np.sin(3.0*M)
+   #
+   # długość ekliptyczna Słońca w układzie równika i ekliptyki daty
+   return( np.mod( meanL + q/deg2rad +180.0, 360.0 )*deg2rad );
 
 
-#print("Moduł astrobox, ©Krzysztof Goździewski, 2009-2024, ver 18.03.2024")
+def DeltaE( year, month, day, hour, min, sec ):
+   """
+   
+   równanie czasu w oparciu o długość ekliptyczną Słońca [min]
+   
+   """    
+      
+   # stałe modelu orbitalnego Słońca w/g danych JPL
+   ecc     = 0.01671123   # mimośród obity Ziemi   
+   lambda0 = 280.458      # długość średnia epoki z poprawką aberracyjną [deg] 
+   M0      = 357.588      # anomalia średnia epoki   
+   eps  = deg2rad( 23, 26, 21.45 )
+   
+   # współrzędne kątowe Słońca: długość średnia
+   lsun = SunLongitude( year, month, day, hour, min, sec );
+   # i anomalia średnia, M = lsun + M0-lambda0, dla wyliczenia q
+   M    = np.mod( lsun + (M0-lambda0)*np.pi/180, 2*np.pi );
+   
+   # rektascensja Słońca ,,prawdziwego''
+   asun = np.arctan( np.cos(eps)*np.tan(lsun) )
+
+   if ( lsun >= 3*np.pi/2.0 ):
+     alphasun = 2*np.pi+asun
+   if ( lsun <= np.pi/2.0 ):
+     alphasun = asun
+   if ( (lsun > np.pi/2.0) & ( lsun < 3*np.pi/2.0) ):   
+     alphasun = asun + np.pi 
+     
+   # równanie czasu: mean alpha - alpha = lambda - arctan( alpha ) + q
+   dalpha = lsun -alphasun -2*ecc*np.sin(M) 
+   
+   return( (dalpha*180.0/np.pi)/15.0*60 );   
+
+
+
+# ----------------------------------------------------------------------------
+# Notatki
+# ----------------------------------------------------------------------------
+#
+# Definicja i algorytm obliczania czasu gwiazdowego (Astronomical Almanac)
+#
+# https://aa.usno.navy.mil/faq/docs/GAST.php
+#
+# Sidereal time is a system of timekeeping based on the rotation of the Earth
+# with respect to the fixed stars in the sky.  More specifically, it is the
+# measure of the hour angle of the vernal equinox.  If the hour angle is
+# measured with respect to the true equinox, apparent sidereal time is being
+# measured.  If the hour angle is measured with respect to the mean equinox,
+# mean sidereal time is being measured.  When the measurements are made with
+# respect to the meridian at Greenwich, the times are referred to as
+# Greenwich mean sidereal time (GMST) and Greenwich apparent sidereal time
+# (GAST).
+
+# Given below is a simple algorithm for computing apparent sidereal time to
+# an accuracy of about 0.1 second, equivalent to about 1.5 arcseconds on the
+# sky.  The input time required by the algorithm is represented as a Julian
+# date (Julian dates can be used to determine Universal Time.)
+
+# Let JD be the Julian date of the time of interest.  Let JD0 be the Julian
+# date of the previous midnight (0h) UT (the value of JD0 will end in .5
+# exactly), and let H be the hours of UT elapsed since that time.  Thus we
+# have JD = JD0 + H/24.
+
+# For both of these Julian dates, compute the number of days and fraction (+
+# or -) from 2000 January 1, 12h UT, Julian date 2451545.0:
+
+# D = JD - 2451545.0
+# D0 = JD0 - 2451545.0
+
+# Then the Greenwich mean sidereal time in hours is
+
+# GMST = 6.697374558 + 0.06570982441908 D0 + 1.00273790935 H + 0.000026 T2
+
+# where T = D/36525 is the number of centuries since the year 2000; thus the
+# last term can be omitted in most applications.  It will be necessary to
+# reduce GMST to the range 0h to 24h.  Setting H = 0 in the above formula
+# yields the Greenwich mean sidereal time at 0h UT, which is tabulated in The
+# Astronomical Almanac.
+
+# The following alternative formula can be used with a loss of precision of
+# 0.1 second per century:
+
+# GMST = 18.697374558 + 24.06570982441908 D
+
+# where, as above, GMST must be reduced to the range 0h to 24h.  The
+# equations for GMST given above are adapted from those given in Appendix A
+# of USNO Circular No.  163 (1981).
+
+# The Greenwich apparent sidereal time is obtained by adding a correction to
+# the Greenwich mean sidereal time computed above.  The correction term is
+# called the nutation in right ascension or the equation of the equinoxes.
+# Thus,
+
+# GAST = GMST + eqeq.
+
+# The equation of the equinoxes is given as eqeq = Δψ cos ε where Δψ, the
+# nutation in longitude, is given in hours approximately by
+# Δψ ≈ -0.000319 sin Ω - 0.000024 sin 2L
+# with Ω, the Longitude of the ascending node of the Moon, given as
+# Ω = 125.04 - 0.052954 D,
+# and L, the Mean Longitude of the Sun, given as
+# L = 280.47 + 0.98565 D.
+# ε is the obliquity and is given as ε = 23.4393 - 0.0000004 D.
+# The above expressions for Ω, L, and ε are all expressed in degrees.
+
+# The mean or apparent sidereal time locally is found by obtaining the local
+# longitude in degrees, converting it to hours by dividing by 15, and then
+# adding it to or subtracting it from the Greenwich time depending on whether
+# the local position is east (add) or west (subtract) of Greenwich.
+
+# If you need apparent sidereal time to better than 0.1 second accuracy on a
+# regular basis, consider using the Multiyear Interactive Computer Almanac,
+# MICA.  MICA provides very accurate almanac data in tabular form for a range
+# of years.
+
+# NOTES ON ACCURACY
+
+# The maximum error resulting from the use of the above formulas for sidereal
+# time over the period 2000-2100 is 0.432 seconds; the RMS error is 0.01512
+# seconds.  To obtain sub-second accuracy in sidereal time, it is important
+# to use the form of Universal Time called UT1 as the basis for the input
+# Julian date.
+
+# The maximum value of the equation of the equinoxes is about 1.1 seconds, so
+# if an error of ~1 second is unimportant, the last series of formulas can be
+# skipped entirely.  In this case set eqeq = 0 and GAST = GMST, and use
+# either UT1 or UTC as the Universal Time basis for the input Julian date.
+#
+#
+
+def test():
+  """
+
+    Funkcja testowa modułu asabox
+    
+  """
+
+  print("\nLista funkcji: dir(asa) ")
+  #dir(astrobox)
+  print("\nPrzykład opisu funkcji JDN")
+  print(inspect.getdoc(JDN))
+  print("\nTest kilku funkcji modułu toolbox.py \n")
+  DEC = deg2rad( 89, 15, 40.8 )
+  printdeg( DEC, 'deklinacja Polaris' )
+  print("deklinacja Polaris, bez nazwy")
+  printdeg( DEC )
+  JD( 2020, 3, 18, 14, 10, 10 )
+  gmst = GMST( 2019, 3, 18, 14, 0, 0 )
+  printhr( gmst, 'średni czas gwiazdowy Greenwich   ')
+  gst = GST( 2019, 3, 18, 14, 0, 0 )
+  printhr( gst,  'prawdziwy czas gwiazdowy Greenwich')
+  print("\nPrzemiana ekliptyczne->równikowe II")
+  alpha,delta = ecl2eqII( 23.5*d2r, 30.0*d2r, 23.5*d2r )
+  print( "alpha = %f6.3, delta = %f6.3 " % ( alpha, delta ) )
+
+  print("\n")   
+  print("Długość ekliptyczna Słońca w równonocy 20.III (data z rocznika)")
+  printdeg( SunLongitude( 1896, 3, 20,  2, 46,41 ), "equinox 1896 02:46, λ☉ = " );
+  printdeg( SunLongitude( 2010, 3, 20, 17, 32, 0 ), "equinox 2010 17:32, λ☉ = " );
+  printdeg( SunLongitude( 2015, 3, 20, 22, 45, 0 ), "equinox 2015 22:45, λ☉ = " );
+  printdeg( SunLongitude( 2016, 3, 20,  4, 30, 0 ), "equinox 2016 04:30, λ☉ = " ); 
+  printdeg( SunLongitude( 2019, 3, 20, 21, 58, 0 ), "equinox 2019 21:58, λ☉ = " );
+  printdeg( SunLongitude( 2020, 3, 20,  3, 49, 0 ), "equinox 2020 03:49, λ☉ = " );
+
+  print("\n")
+  print("Długość Słońca dla momentów z Astronomical Almanac, układ średni daty")
+  printdeg( SunLongitude( 2000, 3, 20,  7, 35, 0 ), "equinox 2000 (20.III  7:35 UT): " );
+  printdeg( SunLongitude( 2000, 9, 22, 17, 28, 0 ), "equinox 2000 (22.IX  17:28 UT): " );
+  printdeg( SunLongitude( 2010, 3, 20, 17, 32, 0 ), "equinox 2010 (20.III 17:32 UT): " ); 
+  printdeg( SunLongitude( 2010, 9, 23,  3,  9, 0 ), "equinox 2010 (23.IX   3:09 UT): " );
+  printdeg( SunLongitude( 2015, 3, 20, 22, 45, 0 ), "equinox 2015 (20.III 22:45 UT): " );
+  printdeg( SunLongitude( 2020, 3, 20,  3, 49, 0 ), "equinox 2020 (20.III 03:49 UT): " );   
+  printdeg( SunLongitude( 2020, 9, 22, 13, 31, 0 ), "equinox 2020 (22.IX  13:31 UT): " );
+  printdeg( SunLongitude( 2024, 3, 20,  3,  6, 0 ), "equinox 2024 (20.III 03:06 UT): " );   
+  printdeg( SunLongitude( 2024, 9, 22, 12, 44, 0 ), "equinox 2024 (22.IX  12:44 UT): " );
+  print("Odchyłka 1' kątowej = 1/30 kątowych rozmiarów tarczy Słońca \n")
+
+  print("Równania czasu w kolejnych tygodniach 2024, podane w minutach")
+  year = 2024
+  hr   = 12
+  mday = ( 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 )
+  date = np.zeros(sum(mday))
+  de   = np.zeros(sum(mday))
+  k    = 0
+  for i in range( 0, 12 ):
+    for j in range( 0, mday[i], 7 ):
+       date[k] = JD( year, i+1, j+1, hr, 0, 0 ) -JD( year, 1, 1, hr, 0, 0 )
+       de[k]   = DeltaE( year, i+1, j+1, hr, 0, 0 )
+       print( date[k], round(DeltaE( year, i+1, j+1, hr, 0, 0 ),3), i+1, j+1 )
+       k = k+1
+   
+
+if __name__ == "__main__":
+  import doctest
+  import inspect
+  print("\nTest zgodności wybranych funkcji modułu astrobox.py\n")
+  doctest.testmod(exclude_empty=True)
+  test()
+  print("\n")
+
+
+print("Moduł astrobox, ©Krzysztof Goździewski, 2009-2024, ver 6.04.2024")
 doc(intro)
 
