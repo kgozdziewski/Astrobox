@@ -893,9 +893,9 @@ def SunLongitudet( jd ):
    deg2rad = np.pi/180.0
    t0      = 2451545.0    # epoka początkowa [JD]
    ecc     = 0.01671123   # mimośród obity Ziemi w epoce t0  
-   omega0  = 102.93768193 # długość preicentrum [deg] w epoce t0   
+   omega0  = 102.93768193 # długość pericentrum [deg] w epoce t0   
    kappa   = 20.5/3600.0  # poprawka aberracyjna [deg] 
-   psi     = 3.8246e-5    # roczne tempo precesji [deg]
+   psi     = 3.8246e-5    # roczne tempo precesji lunisolarnej [deg]
                           # dw/dt precesja peryhelium [deg/dzień]
    nomega  = 0.32327364/36525.0 
                           # dL/dt ruch średni w długości                        
