@@ -22,11 +22,7 @@ def intro():
     * Usunięcie tego opisu: dodaj komentarz do ostatniego wiersza w pliku
       # intro(doc)  
       
-<<<<<<< HEAD
     © Krzysztof Goździewski, 2009-2023, wersja 6.04.2024
-=======
-    © Krzysztof Goździewski, 2009-2024, wersja 18.03.2024
->>>>>>> 95b11284b759e1ba9a1a402a80666132a57e728e
   """ 
 #----------------------------------------------------------------------------
 #
@@ -936,6 +932,16 @@ def DeltaE( year, month, day, hour, min, sec ):
    """
    
    równanie czasu w oparciu o długość ekliptyczną Słońca [min]
+   
+   >>> lsun = asa.SunLongitude( 2024, 6, 4, 10, 22, 22 )
+   >>> asa.printdeg( lsun, "λ☉ w dniu 6.4.2024, godz. 10:22:22 UTC)")
+   λ☉ w dniu 6.4.2024, godz. 10:22:22 UTC) =  74° 17' 32.52”
+   
+   >>> asa.JD( 2024, 6, 4, 10, 22, 22 )
+   2460465.932199074
+   >>> lsun = asa.SunLongitudet( 2460465.932199074 )
+   >>> asa.printdeg( lsun, "λ☉ w dniu 6.4.2024, godz. 10:22:22 UTC)")
+   λ☉ w dniu 6.4.2024, godz. 10:22:22 UTC) =  74° 17' 32.52” 
    
    """    
       
