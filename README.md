@@ -12,6 +12,9 @@ Astrobox korzysta ze standardowego modułu do obliczeń matematycznych numpy
   
     * Lista funkcji w module: 
       dir(asa)
+      
+    * Uruchomienie wybranych funkcji: asa.test()
+      
   
     * Opis funkcji "foo" z przykładem: 
       asa.opis(asa.foo)
@@ -21,4 +24,8 @@ Astrobox korzysta ze standardowego modułu do obliczeń matematycznych numpy
       from importlib import reload
       reload(asa)
       
-© Krzysztof Goździewski, 2009-2024, wersja 18.03.2024
+    * Usunięcie tego opisu: dodaj komentarz do ostatniego wiersza w pliku
+      # intro(doc)  
+      
+      
+© Krzysztof Goździewski, 2009-2024, wersja 6.04.2024
