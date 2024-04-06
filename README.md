@@ -21,4 +21,4 @@ Astrobox korzysta ze standardowego modułu do obliczeń matematycznych numpy
       from importlib import reload
       reload(asa)
       
-© Krzysztof Goździewski, 2009-2023, wersja 18.03.2023
+© Krzysztof Goździewski, 2009-2024, wersja 18.03.2024

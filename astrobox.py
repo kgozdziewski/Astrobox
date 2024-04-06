@@ -22,7 +22,11 @@ def intro():
     * Usunięcie tego opisu: dodaj komentarz do ostatniego wiersza w pliku
       # intro(doc)  
       
+<<<<<<< HEAD
     © Krzysztof Goździewski, 2009-2023, wersja 6.04.2024
+=======
+    © Krzysztof Goździewski, 2009-2024, wersja 18.03.2024
+>>>>>>> 95b11284b759e1ba9a1a402a80666132a57e728e
   """ 
 #----------------------------------------------------------------------------
 #
