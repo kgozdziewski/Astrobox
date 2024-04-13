@@ -22,7 +22,7 @@ def intro():
     * Usunięcie tego opisu: dodaj komentarz do ostatniego wiersza w pliku
       # intro(doc)  
       
-    © Krzysztof Goździewski, 2009-2023, wersja 6.04.2024
+    © Krzysztof Goździewski, 2009-2024, wersja 8.04.2024
   """ 
 #----------------------------------------------------------------------------
 #
@@ -33,7 +33,7 @@ import numpy as np
 import inspect
 
 # ----------------------------------------------------------------------------
-# stałe
+# Stałe fundamentalne
 # ----------------------------------------------------------------------------
 
 # zero ,,maszynowe'', dokładność 1+eps=1
@@ -46,7 +46,7 @@ JD2000 = 2451545.0
 cy     = 36525.0
 
 # ----------------------------------------------------------------------------
-# konwersje katów pomiędzy rożnymi miarami oraz wypisywanie kątów z mianami
+# Konwersje katów pomiędzy różnymi miarami oraz wypisywanie kątów z mianami
 # ----------------------------------------------------------------------------
 
 def hr2rad( hr, min, sec ):
@@ -65,7 +65,7 @@ def hr2rad( hr, min, sec ):
 def deg2rad( deg, min, sec ):
    """
 
-     zamiana kąta w mierze stopniowej na łukową
+     Zamiana kąta w mierze stopniowej na łukową
      rad = deg2rad( deg, min, sec )
 
      przykład:
@@ -458,12 +458,29 @@ def JDN( year, month, day ):
 
      Dzień Juliański _w południe uniwersalne 12h UTC_
      jdn = JDN( year, month, day )
+     
+     Uwaga:
+     
+     Funkcja nie zwraca poprawnej wartości JDN dla dat przed 4 X 1582
 
      The Julian Day Number (JDN) is the integer assigned to a whole solar day
      in the Julian day count starting from noon Greenwich Mean Time, with
      Julian day number 0 assigned to the day starting at noon on January 1,
      4713 BC, proleptic Julian calendar (November 24, 4714 BC, in the
      proleptic Gregorian calendar)
+     
+     This application assumes that the changeover from the Julian calendar
+     to the Gregorian calendar occurred in October of 1582, according to the
+     scheme instituted by Pope Gregory XIII.  Specifically, for dates on or
+     before 4 October 1582, the Julian calendar is used; for dates on or
+     after 15 October 1582, the Gregorian calendar is used.  Thus, there is
+     a ten-day gap in calendar dates, but no discontinuity in Julian dates
+     or days of the week: 4 October 1582 (Julian) is a Thursday, which
+     begins at JD 2299159.5; and 15 October 1582 (Gregorian) is a Friday,
+     which begins at JD 2299160.5.  The omission of ten days of calendar
+     dates was necessitated by the astronomical error built up by the Julian
+     calendar over its many centuries of use, due to its too-frequent leap
+     years. (https://aa.usno.navy.mil/data/JulianDate)  
 
      przykłady:
      >>> JDN( 2019, 3, 15 )
@@ -484,6 +501,11 @@ def JD( year, month, day, hour, minute, second ):
 
      Data Juliańska, korzysta z algorytmu numeru Dnia Juliańskiego
      jd = JD( year, month, day, hour, minute, second )
+     
+     Uwaga:
+     
+     Funkcja nie zwraca poprawnej wartości JD dla dat przed 4 X 1582
+     
 
      przykład:
      >>> JD( 2019, 3, 13, 0, 0, 0 )
@@ -582,8 +604,10 @@ def JDtoDate(jd):
      (1985.0, 2.0, 17.25)
      >>> JDtoDate(2451545.0)
      (2000.0, 1.0, 1.5)
-     >>> JD( 2000.0, 1.0, 1, 12, 0, 0)
+     >>> JD( 2000.0, 1.0, 1, 12, 0, 0 )
      2451545.0
+     >>> asa.JDtoDate( 0 )
+     (-4712.0, 1.0, 1.5)
 
     """
     jd = jd + 0.5
@@ -637,11 +661,8 @@ def doc(fun):
   print(inspect.getdoc(fun))
   
   
-
-
-
 # ----------------------------------------------------------------------------
-# konwersja elementów wektorowych
+# Konwersja elementów wektorowych
 # ----------------------------------------------------------------------------
 
 def sph2cart( r, lon, phi ):
@@ -776,7 +797,7 @@ def A3( psi ):
    return( A )
 
 # ----------------------------------------------------------------------------
-# macierz precesji ogólnej
+# Macierz precesji ogólnej
 # ----------------------------------------------------------------------------
 
 def precess( dt ):
@@ -809,9 +830,12 @@ def precess( dt ):
    
 def SunLongitude( year, month, day, hour, min, sec ):
    """
-     długość ekliptyczna Słońca
+     Długość ekliptyczna Słońca na podstawie Almagest, R. Fitzpatrick
+     szczegóły takiże w wykładzie IX
      dokładność 0.1'-0.7' w latach 1800:2050
      uwzględniona precesja punktu Barana, precesja peryhelium  i aberracja
+     
+     testy stałych teorii 
      ruch średni w długości po uwzględnieniu precesji:
 
      >>> (360.0)/365.242189
@@ -866,12 +890,36 @@ def SunLongitude( year, month, day, hour, min, sec ):
    #
    # długość ekliptyczna Słońca w układzie równika i ekliptyki daty
    return( np.mod( meanL + q/deg2rad +180.0, 360.0 )*deg2rad );
+   
+def SunLambda( year, month, day, hour, min, sec ):
+   """
+     Długość ekliptyczna Słońca [rad], dokładność 1' w 1800:2050
+     uwzględniona precesja, precesja peryhelium i aberracja
+     algorytm z Astronomical Almanac, sekcja C24   
+     
+     >>> lsun1 = asa.SunLongitude( 2024, 6, 4, 10, 22, 22 )
+     >>> lsun2 = asa.SunLambda( 2024, 6, 4, 10, 22, 22 )
+     >>> asa.print180( lsun1-lsun2 )
+     -0°  0' 5.03” 
+   """         
+   # interwał od daty juliańskiej t0 = 2451545.0
+   dt    = JD( year, month, day, hour, min, sec ) - 2451545.0
+   # długość średnia Słońca, poprawiona na precesję i aberrację
+   meanL = np.mod( 280.460 + 0.9856474*dt, 360.0 )
+   # anomalia śednia w epoce obserwacji z precesją peryhelium
+   M     = np.mod( 357.528 + 0.9856003*dt, 360.0 )*np.pi/180.0
+   # poprawka na równanie środka wyznaczające anomalię prawdziwą
+   q     = 1.915*np.sin(M) + 0.020*np.sin(2.0*M)
+   # długość ekliptyczna Słońca w układzie równika-ekliptyki daty
+   return( np.mod( meanL + q, 360.0 )*np.pi/180.0 );
+   
 
 def SunLongitudet( jd ):
    """
-     długość ekliptyczna Słońca z argumentem Daty Juliańskiej
+     Długość ekliptyczna Słońca z argumentem Daty Juliańskiej
      dokładność 0.1'-0.7' w latach 1800:2050
      uwzględniona precesja punktu Barana, precesja peryhelium obity i aberracja
+     algorytm z Almagest, R. Fitzpatrick
      ruch średni w długości po uwzględnieniu precesji:
 
      >>> (360.0)/365.242189
@@ -931,8 +979,9 @@ def SunLongitudet( jd ):
 def DeltaE( year, month, day, hour, min, sec ):
    """
    
-   równanie czasu w oparciu o długość ekliptyczną Słońca [min]
-   
+   Równanie czasu w oparciu o długość ekliptyczną Słońca [min]
+              ΔE = T_true - T_mean = α_mean - α_true
+   Długość ekliptyczna Słońca obliczana w/g Almagest lub AA
    >>> lsun = asa.SunLongitude( 2024, 6, 4, 10, 22, 22 )
    >>> asa.printdeg( lsun, "λ☉ w dniu 6.4.2024, godz. 10:22:22 UTC)")
    λ☉ w dniu 6.4.2024, godz. 10:22:22 UTC) =  74° 17' 32.52”
@@ -949,14 +998,14 @@ def DeltaE( year, month, day, hour, min, sec ):
    ecc     = 0.01671123   # mimośród obity Ziemi   
    lambda0 = 280.458      # długość średnia epoki z poprawką aberracyjną [deg] 
    M0      = 357.588      # anomalia średnia epoki   
-   eps  = deg2rad( 23, 26, 21.45 )
+   eps     = deg2rad( 23, 26, 21.45 )
    
    # współrzędne kątowe Słońca: długość średnia
    lsun = SunLongitude( year, month, day, hour, min, sec );
    # i anomalia średnia, M = lsun + M0-lambda0, dla wyliczenia q
    M    = np.mod( lsun + (M0-lambda0)*np.pi/180, 2*np.pi );
    
-   # rektascensja Słońca ,,prawdziwego''
+   # rektascensja RA Słońca ,,prawdziwego''
    asun = np.arctan( np.cos(eps)*np.tan(lsun) )
 
    if ( lsun >= 3*np.pi/2.0 ):
@@ -1101,6 +1150,15 @@ def test():
   printdeg( SunLongitude( 2016, 3, 20,  4, 30, 0 ), "equinox 2016 04:30, λ☉ = " ); 
   printdeg( SunLongitude( 2019, 3, 20, 21, 58, 0 ), "equinox 2019 21:58, λ☉ = " );
   printdeg( SunLongitude( 2020, 3, 20,  3, 49, 0 ), "equinox 2020 03:49, λ☉ = " );
+  
+  print("\n")   
+  print("Długość ekliptyczna Słońca w równonocy 20.III (data z rocznika), AA")
+  printdeg( SunLambda( 1896, 3, 20,  2, 46,41 ), "equinox 1896 02:46, λ☉ = " );
+  printdeg( SunLambda( 2010, 3, 20, 17, 32, 0 ), "equinox 2010 17:32, λ☉ = " );
+  printdeg( SunLambda( 2015, 3, 20, 22, 45, 0 ), "equinox 2015 22:45, λ☉ = " );
+  printdeg( SunLambda( 2016, 3, 20,  4, 30, 0 ), "equinox 2016 04:30, λ☉ = " ); 
+  printdeg( SunLambda( 2019, 3, 20, 21, 58, 0 ), "equinox 2019 21:58, λ☉ = " );
+  printdeg( SunLambda( 2020, 3, 20,  3, 49, 0 ), "equinox 2020 03:49, λ☉ = " );  
 
   print("\n")
   print("Długość Słońca dla momentów z Astronomical Almanac, układ średni daty")
@@ -1131,6 +1189,7 @@ def test():
    
 
 if __name__ == "__main__":
+  print("Moduł astrobox, ©Krzysztof Goździewski, 2009-2024, ver 6.04.2024")
   import doctest
   import inspect
   print("\nTest zgodności wybranych funkcji modułu astrobox.py\n")
@@ -1138,7 +1197,6 @@ if __name__ == "__main__":
   test()
   print("\n")
 
-
-print("Moduł astrobox, ©Krzysztof Goździewski, 2009-2024, ver 6.04.2024")
+print("Moduł astrobox, ©Krzysztof Goździewski, 2009-2024, ver 8.04.2024")
 doc(intro)
 
