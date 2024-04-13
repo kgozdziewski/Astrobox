@@ -22,7 +22,7 @@ def intro():
     * Usunięcie tego opisu: dodaj komentarz do ostatniego wiersza w pliku
       # intro(doc)  
       
-    © Krzysztof Goździewski, 2009-2024, wersja 8.04.2024
+    © Krzysztof Goździewski, 2009-2024, wersja 13.04.2024
   """ 
 #----------------------------------------------------------------------------
 #
@@ -1197,6 +1197,6 @@ if __name__ == "__main__":
   test()
   print("\n")
 
-print("Moduł astrobox, ©Krzysztof Goździewski, 2009-2024, ver 8.04.2024")
+print("Moduł astrobox, ©Krzysztof Goździewski, 2009-2024, ver 13.04.2024")
 doc(intro)
 
