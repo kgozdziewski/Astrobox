@@ -1197,6 +1197,6 @@ if __name__ == "__main__":
   test()
   print("\n")
 
-print("Moduł astrobox, ©Krzysztof Goździewski, 2009-2024, ver 13.04.2024")
+# print("Moduł astrobox, ©Krzysztof Goździewski, 2009-2024, ver 13.04.2024")
 doc(intro)
 
