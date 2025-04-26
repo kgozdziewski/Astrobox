@@ -1229,7 +1229,7 @@ def refract( zobs, Hobs=0, P=1013, T=0):
    t = T
    
    if ( (P==1010) & (T==0) ):
-       p = P * np.exp( Hobs / s )
+       p = P * np.exp( -Hobs / s )
 
    h = 90.0 - zo
    r = 0.016667 / np.tan( (h + 7.31/(h+4.4) ) * np.pi/180.)
