@@ -22,7 +22,7 @@ def intro():
     * Usunięcie tego opisu: dodaj komentarz do ostatniego wiersza w pliku
       # intro(doc)  
       
-    © Krzysztof Goździewski, 2009-2024, wersja 13.04.2024
+    © Krzysztof Goździewski, 2009-2025, wersja 24.04.2025
   """ 
 #----------------------------------------------------------------------------
 #
@@ -1187,6 +1187,58 @@ def test():
        print( date[k], round(DeltaE( year, i+1, j+1, hr, 0, 0 ),3), i+1, j+1 )
        k = k+1
    
+def refract( zobs, Hobs=0, P=1013, T=0):
+   '''
+     Oblicza refrakcję atmosferyczną w kącie odległości zenitalnej
+     dla długości fal optycznych, wynik w radianach
+
+     Dodatek Wyjaśniający do Astronomicznego Almanachu, str. 144.
+     Bennett, G. (1982), Journal of Navigation (Royal Institute) 35,
+     s. 255-259.
+
+     zobs: odległość zenitalna z observacji w radianach
+     Hobs: wysokość nad poziomem morza w m
+
+     na podstawie NOVAS, V1.0/06-98/JAB (USNO/AA)
+
+     UWAGI: Funkcja może być używana do planowania obserwacji lub
+      sterowania teleskopem, ale nie powinna być stosowana do redukcji
+      precyzyjnych obserwacji.
+      
+     >>> asa.printdeg( asa.refract( 10*np.pi/180., 0 ) )
+     0°  0' 10.90” 
+     >>> asa.printdeg( asa.refract( 40*np.pi/180., 0 ) )
+     0°  0' 52.06” 
+     >>> asa.printdeg( asa.refract( 80*np.pi/180., 0 ) )
+     0°  5' 36.10” 
+     >>> asa.printdeg( asa.refract( 90*np.pi/180., 0 ) )
+     0° 35' 49.32”   
+   '''
+
+   # 's' to przybliżona wysokość atmosfery w metrach
+   s = 9.1e3
+   zo = zobs * 180/np.pi
+
+   # refrakcja tylko dla odległości zenitalnych pomiędzy 0.1 a 91 stopni
+   if ((zobs < 0.1) | (zobs > 91.0)):
+       refr = 0.0
+
+   # jeśli dostępne są dane pogodowe z obserwacji, to użyj ich,
+   # w przeciwnym razie, użyj szacunków warunków średnich
+
+   p = P
+   t = T
+   
+   if ( (P==1010) & (T==0) ):
+       p = P * np.exp( Hobs / s )
+
+   h = 90.0 - zo
+   r = 0.016667 / np.tan( (h + 7.31/(h+4.4) ) * np.pi/180.)
+   refr = r * (0.28 * p / (t + 273.0)) * np.pi/180.
+
+   return(  refr )
+
+
 
 if __name__ == "__main__":
   print("Moduł astrobox, ©Krzysztof Goździewski, 2009-2024, ver 6.04.2024")
