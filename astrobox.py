@@ -1193,8 +1193,7 @@ def refract( zobs, Hobs=0, P=1013, T=0):
      dla długości fal optycznych, wynik w radianach
 
      Dodatek Wyjaśniający do Astronomicznego Almanachu, str. 144.
-     Bennett, G. (1982), Journal of Navigation (Royal Institute) 35,
-     s. 255-259.
+     Bennett, G. (1982), Journal of Navigation 35, s. 255
 
      zobs: odległość zenitalna z observacji w radianach
      Hobs: wysokość nad poziomem morza w m
