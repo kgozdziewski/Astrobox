@@ -12,6 +12,8 @@ Aktualizacja w powłoce Pythona po zmianach w pliku:
     from importlib import reload
     reload(asa)
 
+Wersja eksperymentalna, zrewidowana z pomocą LLM GLM-4.7
+
 © Krzysztof Goździewski, 2009-2026, wersja 24.03.2026
 """
 
