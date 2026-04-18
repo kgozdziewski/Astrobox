@@ -4,17 +4,16 @@ def intro():
   """
     Moduł funkcji do obliczeń w astronomii sferycznej i klasycznej,
     korzysta z modułu do obliczeń matematycznych numpy
-    * Użycie: "import astrobox as asa"
-      (funkcje modułu należy poprzedzić prefiksem asa)
-    * Lista funkcji w module: dir(asa)
-    * Opis funkcji "foo" z przykładem: asa.opis(asa.foo), asa.doc(asa.foo)
-    * Uruchomienie wybranych funkcji: asa.test()
+    * Użycie: "from AstroBox import *"
+    * Lista funkcji w module: dir()
+    * Opis funkcji "foo" z przykładem: opis(foo), doc(foo)
+    * Uruchomienie wybranych funkcji: test()
     * Uaktualnienie modułu po zmianach w powłoce Pythona:
       from importlib import reload
-      reload(asa)
+      reload(AstroBox)
     * Usunięcie tego opisu: dodaj komentarz do ostatniego wiersza w pliku
       # intro(doc)  
-     Krzysztof Goździewski, 2009-2026, wersja 09.03.2026
+     Krzysztof Goździewski, 2009-2026, wersja 09.04.2026
   """
 #----------------------------------------------------------------------------
 #
@@ -120,7 +119,7 @@ def rad2hr( rad ):
      >>> printhr( 0.123456 )
      0h 28m  17.64s
    """
-   return _angle_to_dms(rad, to_deg=False)
+   return _angle_to_dms( rad, to_deg=False )
 
 def day2hr( dt ):
    """
@@ -231,6 +230,9 @@ def printhr( angle, name='', fsec=2 ):
      >>> printhr( 3*np.pi/2. + 0.1 )
       18h 22m  55.10s
    """
+   
+   angle = np.fmod( angle , 2*np.pi )
+    
    deg, min, sec = _angle_to_dms(angle, to_deg=False)
    if ( len(name)>0 ):
      format = "%s = %3.0fh %2.0fm %." + str(fsec) + "fs "
